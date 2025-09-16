@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Netflix Movies</title>
+  <style>
+    body {
+      
+      margin: 0;
+      padding: 0;
+      font-family: "Times New Roman", serif;
+      background-color: #ff9898; 
+      color: #fff; 
+      background-image: url('https://images.wallpapersden.com/image/download/netflixone-piece-poster-2023_bmZoZWyUmZqaraWkpJRmbmdlrWZlbWU.jpg'); background-size: cover; background-repeat: no-repeat; background-attachment: fixed;
+    }
+    h1 {
+      text-align: center;
+      margin: 20px 0;
+      color: #e50914; 
+    }
+    .container {
+      display: grid;
+      grid-template-columns: 350px 1fr;
+      gap: 20px;
+      padding: 20px;
+      align-items: start;
+    }
+    form {
+      background: #111;
+      padding: 20px;
+      border-radius: 10px;
+    }
+    label {
+      display: block;
+      margin-top: 10px;
+      font-weight: bold;
+    }
+    input, textarea {
+      width: 100%;
+      padding: 8px;
+      margin-top: 5px;
+      border-radius: 5px;
+      border: none;
+      font-family: "Times New Roman", serif;
+    }
+    button {
+      margin-top: 10px;
+      padding: 10px;
+      border: none;
+      border-radius: 5px;
+      background: #e50914;
+      color: white;
+      cursor: pointer;
+      font-family: "Times New Roman", serif;
+    }
+    button:hover {
+      background: #f40612;
+    }
+    #movieList {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      gap: 20px;
+    }
+ .movie-card {
+  background: #fff;      
+  color: #000;         
+  border-radius: 10px;
+  padding: 15px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+  text-align: center;
+}
+.movie-card h3 {
+  color: #e50914; 
+}
+
+    .movie-card img {
+      width: 100%;
+      max-height: 350px;   
+      object-fit: contain; 
+      border-radius: 8px;
+      background: #ffffff;    
+    }
+    .actions {
+      margin-top: 10px;
+    }
+    .actions button {
+      margin-right: 5px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Netflix Movies</h1>
+  <div class="container">
+    <form id="movieForm">
+      <input type="hidden" id="movieId"/>
+      <label>Title:</label>
+      <input type="text" id="title" required/>
+      <label>Actors:</label>
+      <input type="text" id="actors" required/>
+      <label>Year:</label>
+      <input type="number" id="year" required/>
+      <label>Description:</label>
+      <textarea id="description" rows="3" required></textarea>
+      <label>Image URL:</label>
+      <input type="text" id="image" required/>
+      <button type="submit">Save Movie</button>
+    </form>
+    <div id="movieList"></div>
+  </div>
+
+  <script>
+    const movies = [
+      { id: "hotel-transylvania", title: "Hotel Transylvania", actors: "Adam Sandler, Andy Samberg, Selena Gomez", year: 2012, description: "Dracula manages a hotel for monsters.", image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR8pGH_u_PnI5Cy0EYxwNRuFN_DXEycQ-MmQw&s" },
+      { id: "barbie-touch-of-magic", title: "Barbie: A Touch of Magic", actors: "America Young, Tatiana Varria, Ritesh Rajan", year: 2022, description: "Magical adventures with Barbie.", image: "https://occ-0-4821-2186.1.nflxso.net/dnm/api/v6/Qs00mKCpRvrkl3HZAN5KwEL1kpE/AAAABaY0hc2KhVcUDGWnLqVmIeAp5YZcyQA9SZBwDFBpuBtp7Fj00Kw0PDh3jSYJ7bWIRZDbHyvdZfP1a_HcOCpuWR1NuuYdsrYm60Q.jpg?r=b06" },
+      { id: "secret-life-of-pets", title: "The Secret Life of Pets", actors: "Louis C.K., Eric Stonestreet, Kevin Hart", year: 2016, description: "Pets' adventures in New York.", image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQz-lw4xf7JPfVlX0t1sdfsdKT4tBLu1U8eoA&s" },
+      { id: "boss-baby-2", title: "The Boss Baby: Family Business", actors: "Alec Baldwin, James Marsden, Amy Sedaris", year: 2021, description: "The Boss Baby returns.", image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRv7I8umiIfHdUEHHRpGHc5MI2w2pjD5MwGNQ&s" },
+      { id: "angry-birds-2", title: "The Angry Birds Movie 2", actors: "Jason Sudeikis, Rachel Bloom, Leslie Jones", year: 2019, description: "Birds and pigs team up.", image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ2XqQMRgKJ_SSH24LbmjRR62mc9o4JQJa8Ig&s" },
+      { id: "stuart-little-2", title: "Stuart Little 2", actors: "Michael J. Fox, Geena Davis, Hugh Laurie", year: 2002, description: "Stuart's new adventure.", image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTIY9cogxh9rYUNNjT87oapZI954XhEpimP5Q&s"}
+    ];
+
+    function renderMovies() {
+      const movieList = document.getElementById("movieList");
+      movieList.innerHTML = "";
+      movies.forEach(m => {
+        const div = document.createElement("div");
+        div.className = "movie-card";
+        div.innerHTML = `
+          <img src="${m.image}" alt="${m.title}"/>
+          <h3 style="color:#e50914">${m.title}</h3>
+          <p><strong>Actors:</strong> ${m.actors}</p>
+          <p><strong>Year:</strong> ${m.year}</p>
+          <p>${m.description}</p>
+          <div class="actions">
+            <button onclick="editMovie('${m.id}')">Edit</button>
+            <button onclick="deleteMovie('${m.id}')">Delete</button>
+          </div>
+        `;
+        movieList.appendChild(div);
+      });
+    }
+
+    document.getElementById("movieForm").addEventListener("submit", e => {
+      e.preventDefault();
+      const id = document.getElementById("movieId").value || Date.now().toString();
+      const title = document.getElementById("title").value;
+      const actors = document.getElementById("actors").value;
+      const year = document.getElementById("year").value;
+      const description = document.getElementById("description").value;
+      const image = document.getElementById("image").value;
+
+      const existing = movies.find(m => m.id === id);
+      if (existing) {
+        existing.title = title;
+        existing.actors = actors;
+        existing.year = year;
+        existing.description = description;
+        existing.image = image;
+      } else {
+        movies.push({ id, title, actors, year, description, image });
+      }
+      document.getElementById("movieForm").reset();
+      document.getElementById("movieId").value = "";
+      renderMovies();
+    });
+
+    function editMovie(id) {
+      const movie = movies.find(m => m.id === id);
+      if (!movie) return;
+      document.getElementById("movieId").value = movie.id;
+      document.getElementById("title").value = movie.title;
+      document.getElementById("actors").value = movie.actors;
+      document.getElementById("year").value = movie.year;
+      document.getElementById("description").value = movie.description;
+      document.getElementById("image").value = movie.image;
+    }
+
+    function deleteMovie(id) {
+      const index = movies.findIndex(m => m.id === id);
+      if (index !== -1) {
+        movies.splice(index, 1);
+        renderMovies();
+      }
+    }
+
+    renderMovies();
+  </script>
+</body>
+</html>
